@@ -1,7 +1,7 @@
 {
   "name": "ai-shield",
   "description": "Generates various config files to keep bots/data crawlers from stealing your content without your permission",
-  "version": "0.0.0",
+  "version": "0.0.0-developmentgit",
   "author": "Bethany Fannin",
   "bin": {
     "shield": "./bin/run.js"
