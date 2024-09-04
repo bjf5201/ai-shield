@@ -8,19 +8,22 @@ on:
 permissions:
   contents: read # for checkout
 
+env:
+  APP_ENV: development
+
 jobs:
   unit-tests:
     strategy:
       matrix:
         os: ['ubuntu-latest', 'windows-latest']
-        node_version: [lts/-1, lts/*, latest]
+        node_version: ['lts/*', 'latest'] # add lts/-1, research how @TODO
       fail-fast: false
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ github.env.APP_ENV == 'production' && matrix.os || 'ubuntu-latest' }}
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: ${{ github.env.APP_ENV == 'production' && matrix.node_version || '18' }}
           cache: npm
       - run: npm ci
       - run: npm run build
@@ -87,9 +90,7 @@ jobs:
 
       - name: Release new package version
         env:
-          GITHUB_TOKEN: ${{ secrets.GH_TOKEN }}
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
           NPM_TOKEN: ${{ secrets.NPM_TOKEN }}
-        run: npx semantic-release
-             
-
+        run: npx semantic-release             
     
