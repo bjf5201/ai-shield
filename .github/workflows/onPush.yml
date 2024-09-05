@@ -13,17 +13,12 @@ env:
 
 jobs:
   unit-tests:
-    strategy:
-      matrix:
-        os: ['ubuntu-latest', 'windows-latest']
-        node_version: ['lts/*', 'latest'] # add lts/-1, research how @TODO
-      fail-fast: false
-    runs-on: ${{ github.env.APP_ENV == 'production' && matrix.os || 'ubuntu-latest' }}
+    runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: ${{ matrix.node_version }}
+          node-version: "lts/*"
           cache: npm
       - run: npm ci
       - run: npm run build
@@ -32,7 +27,7 @@ jobs:
   code-coverage:
     needs: unit-tests
     name: Code Coverage
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: read # to be able to read package.json
     steps:
@@ -45,6 +40,7 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "lts/*"
+          cache: npm
 
       - name: Install dependencies
         run: npm ci
@@ -62,7 +58,7 @@ jobs:
   publish:
     needs: [unit-tests, code-coverage]
     name: Publish
-    runs-on: ubunto-22.04
+    runs-on: ubuntu-latest
     permissions:
       contents: write # to be able to publish a GitHub release
       issues: write # to be able to comment on released issues
